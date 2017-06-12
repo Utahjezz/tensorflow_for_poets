@@ -91,6 +91,8 @@ else:
     alg = select_alg(nneighbors_sel)
     nbrs = NearestNeighbors(n_neighbors=5, algorithm=alg).fit(X)
     print("training NearestNeighbors")
+    query_val = list([float(x) for x in features[0][0][0]])
+    results = nbrs.kneighbors(np.asarray(query_val))
     print(results)
-        for res in results[1][0]:
-                print(train_dict[res])
+    for res in results[1][0]:
+        print(train_dict[res])
