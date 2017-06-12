@@ -3,7 +3,7 @@ import os, sys
 import tensorflow as tf
 from scipy import spatial
 
-from sklearn.neighbors import KDTree
+from sklearn.neighbors import NearestNeighbors
 
 import numpy as np
 
@@ -24,6 +24,14 @@ image_data = tf.gfile.FastGFile(image_path, 'rb').read()
 # Loads label file, strips off carriage return
 label_lines = [line.rstrip() for line 
                    in tf.gfile.GFile("retrained_labels.txt")]
+
+def select_alg(nneighbors_sel):
+	alg_list = {
+		"KDTree": 'kd_tree',
+		"BallTree": 'ball_tree' ,
+		"Auto": 'auto'
+	}
+	return alg_list[nneighbors_sel]
 
 if sys.argv[3] == 'Classification':
 
@@ -77,18 +85,11 @@ else:
 						
 	print("training NearestNeighbors with ", nneighbors_sel)
 	X = np.asarray(train_list_features)
-	nbrs = NearestNeighbors(n_neighbors=5, algorithm=select_alg(nneighbors_sel)).fit(X)
+	alg = select_alg(nneighbors_sel)
+	nbrs = NearestNeighbors(n_neighbors=5, algorithm=alg).fit(X)
 	print("trained KD")
 	query_val = list([float(x) for x in features[0][0][0]])
 	print(train_dict[nbrs.kneighbors(np.asarray(query_val), k=1)[1][0][0]])
 
 
-def select_alg(nneighbors_sel):
-	alg_list = {
-		"KDTree": 'kd_tree',
-		"BallTree": 'ball_tree' ,
-		"Auto": 'auto'
-	}
-	return alg_list[nneighbors_sel]
-	   
-	 
+

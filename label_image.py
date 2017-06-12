@@ -20,7 +20,7 @@ working_dir = sys.argv[2]
 image_data = tf.gfile.FastGFile(image_path, 'rb').read()
 
 # Loads label file, strips off carriage return
-label_lines = [line.rstrip() for line 
+label_lines = [line.rstrip() for line
                    in tf.gfile.GFile("retrained_labels.txt")]
 
 if sys.argv[3] == 'Classification':
@@ -34,13 +34,13 @@ if sys.argv[3] == 'Classification':
 	with tf.Session() as sess:
 	    # Feed the image_data as input to the graph and get first prediction
 	    softmax_tensor = sess.graph.get_tensor_by_name('final_result:0')
-	    
+
 	    predictions = sess.run(softmax_tensor, \
 	             {'DecodeJpeg/contents:0': image_data})
-	    
+
 	    # Sort to show labels of first prediction in order of confidence
 	    top_k = predictions[0].argsort()[-len(predictions[0]):][::-1]
-	    
+
 	    for node_id in top_k:
 	        human_string = label_lines[node_id]
 	        score = predictions[0][node_id]
@@ -72,14 +72,13 @@ else:
 					train_list_features.append(temp)
 					index = train_list_features.index(temp)
 					train_dict[index] = {"index": index, "file" : os.path.join(os.path.join(working_dir, category_dir), file)}
-						
+
 	print("training KD")
 	X = np.asarray(train_list_features)
 	kdt = KDTree(X, leaf_size=30)
 	print("trained KD")
 	query_val = list([float(x) for x in features[0][0][0]])
 	print(train_dict[kdt.query(np.asarray(query_val), k=1)[1][0][0]])
-		
-	  	
-	   
-	 
+
+
+
